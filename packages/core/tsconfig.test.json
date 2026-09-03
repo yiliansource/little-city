@@ -1,0 +1,12 @@
+{
+	"extends": "../../tsconfig.base.json",
+	"compilerOptions": {
+		"composite": false,
+		"noEmit": true,
+		"types": ["bun"],
+		"paths": {
+			"@little-city/core": ["./src/index.ts"]
+		}
+	},
+	"include": ["src", "tests"]
+}

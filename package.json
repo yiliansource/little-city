@@ -1,0 +1,24 @@
+{
+	"name": "little-city",
+	"devDependencies": {
+		"@biomejs/biome": "2.5.11",
+		"@types/bun": "latest"
+	},
+	"peerDependencies": {
+		"typescript": "^5"
+	},
+	"private": true,
+	"scripts": {
+		"dev": "FORCE_COLOR=3 bun run --filter '@little-city/web' dev",
+		"build": "FORCE_COLOR=3 bun run --filter '@little-city/web' build",
+		"preview": "FORCE_COLOR=3 bun run --filter '@little-city/web' preview",
+		"test": "bun run --filter '*' test",
+		"format": "bunx --bun @biomejs/biome format --write",
+		"lint": "bunx --bun @biomejs/biome lint"
+	},
+	"type": "module",
+	"workspaces": [
+		"apps/*",
+		"packages/*"
+	]
+}

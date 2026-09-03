@@ -1,0 +1,14 @@
+{
+	"extends": "../../tsconfig.base.json",
+	"compilerOptions": {
+		"outDir": "../../node_modules/.cache/tsc/web-app",
+		"types": ["vite/client"],
+		"allowArbitraryExtensions": true,
+		"composite": true
+	},
+	"include": ["src/**/*.ts", "src/**/*.tsx", "src/**/*.vue"],
+	"references": [
+		{ "path": "../../packages/core/tsconfig.build.json" },
+		{ "path": "../../packages/render/tsconfig.json" }
+	]
+}
