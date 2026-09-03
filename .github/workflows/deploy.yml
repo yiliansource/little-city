@@ -1,0 +1,35 @@
+name: Deploy
+
+on:
+    workflow_run:
+        workflows: ["CI"]
+        types: [completed]
+        branches: [main]
+    workflow_dispatch:
+
+permissions:
+    pages: write
+    id-token: write
+
+jobs:
+    deploy:
+        if: >
+            github.event_name == 'workflow_dispatch' ||
+            github.event.workflow_run.conclusion == 'success'
+        runs-on: ubuntu-latest
+        environment:
+            name: github-pages
+            url: ${{ github.event_name == 'workflow_dispatch' && github.ref || github.event.workflow_run.head_sha }}
+        steps:
+            - uses: actions/checkout@v7
+              with:
+                  ref: ${{ github.event.workflow_run.head_sha }}
+            - uses: oven-sh/setup-bun@v2
+            - run: bun install
+            - run: bun run build
+            - uses: actions/configure-pages@v5
+            - uses: actions/upload-pages-artifact@v3
+              with:
+                  path: "apps/web/dist"
+            - id: deploy
+              uses: actions/deploy-pages@v5
