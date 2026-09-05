@@ -1,3 +1,5 @@
+import { assertDefined } from "../common";
+
 export interface GraphNode {
 	id: string;
 }
@@ -45,17 +47,16 @@ export class Graph<
 	}
 
 	insertEdge(edge: E): void {
-		if (!this.nodes.has(edge.from)) {
-			throw new Error("graph does not contain start node");
-		}
-		if (!this.nodes.has(edge.to)) {
-			throw new Error("graph does not contain end node");
-		}
+		const outgoing = this.nodeOutgoingEdges.get(edge.from);
+		const incoming = this.nodeIncomingEdges.get(edge.to);
+
+		assertDefined(outgoing, "graph does not contain start node of edge");
+		assertDefined(incoming, "graph does not contain end node of edge");
 
 		this.edges.set(edge.id, edge);
 
-		this.nodeOutgoingEdges.get(edge.from)?.add(edge.id);
-		this.nodeIncomingEdges.get(edge.to)?.add(edge.id);
+		outgoing.add(edge.id);
+		incoming.add(edge.id);
 	}
 	deleteEdge(edgeId: string): boolean {
 		const edge = this.edges.get(edgeId);
@@ -70,23 +71,21 @@ export class Graph<
 		const neighbourIds: string[] = [];
 		if (direction === "in" || direction === "both") {
 			const incomingEdges = this.nodeIncomingEdges.get(nodeId);
-			if (incomingEdges !== undefined) {
-				for (const edgeId of incomingEdges.values()) {
-					const edge = this.edges.get(edgeId);
-					if (edge !== undefined) {
-						neighbourIds.push(edge.from);
-					}
-				}
+			assertDefined(incomingEdges, "graph does not contain node");
+			for (const edgeId of incomingEdges.values()) {
+				const edge = this.edges.get(edgeId);
+				assertDefined(edge, "graph does not contain incoming edge");
+				neighbourIds.push(edge.from);
 			}
 		}
 		if (direction === "out" || direction === "both") {
 			const outgoingEdges = this.nodeOutgoingEdges.get(nodeId);
+			assertDefined(outgoingEdges, "graph does not contain node");
 			if (outgoingEdges !== undefined) {
 				for (const edgeId of outgoingEdges.values()) {
 					const edge = this.edges.get(edgeId);
-					if (edge !== undefined) {
-						neighbourIds.push(edge.to);
-					}
+					assertDefined(edge, "graph does not contain outgoing edge");
+					neighbourIds.push(edge.to);
 				}
 			}
 		}
@@ -96,15 +95,13 @@ export class Graph<
 		const edgeIds: string[] = [];
 		if (direction === "in" || direction === "both") {
 			const incomingEdges = this.nodeIncomingEdges.get(nodeId);
-			if (incomingEdges !== undefined) {
-				edgeIds.push(...incomingEdges);
-			}
+			assertDefined(incomingEdges, "graph does not contain node");
+			edgeIds.push(...incomingEdges);
 		}
 		if (direction === "out" || direction === "both") {
 			const outgoingEdges = this.nodeOutgoingEdges.get(nodeId);
-			if (outgoingEdges !== undefined) {
-				edgeIds.push(...outgoingEdges);
-			}
+			assertDefined(outgoingEdges, "graph does not contain node");
+			edgeIds.push(...outgoingEdges);
 		}
 		return edgeIds;
 	}

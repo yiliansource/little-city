@@ -3,5 +3,8 @@
 	"compilerOptions": {
 		"composite": true
 	},
-	"references": [{ "path": "./tsconfig.build.json" }]
+	"references": [
+		{ "path": "./tsconfig.build.json" },
+		{ "path": "./tsconfig.test.json" }
+	]
 }
