@@ -7,10 +7,12 @@
 		".": "./src/index.ts"
 	},
 	"dependencies": {
-		"@little-city/core": "workspace:*"
+		"@little-city/core": "workspace:*",
+		"three": "^0.186.0"
 	},
 	"devDependencies": {
-		"@types/bun": "latest"
+		"@types/bun": "latest",
+		"@types/three": "^0.185.4"
 	},
 	"peerDependencies": {
 		"typescript": "^5"

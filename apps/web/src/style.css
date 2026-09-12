@@ -1,7 +1,25 @@
 @import "tailwindcss";
 
+@import "@fontsource-variable/fredoka/wght.css";
+
+@theme {
+	--color-background: #1b1e24;
+	--color-panel: #15161c;
+	--color-panel-border: rgba(255, 255, 255, 0.12);
+
+	--color-foreground: var(--color-zinc-200);
+	--color-foreground-muted: var(--color-zinc-400);
+	--color-foreground-disabled: var(--color-zinc-500);
+
+	--font-display: "Fredoka Variable";
+}
+
 html,
 body {
 	margin: 0;
 	padding: 0;
+}
+
+body {
+	@apply bg-background text-gray-100;
 }

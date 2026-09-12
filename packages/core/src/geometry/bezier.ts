@@ -14,10 +14,7 @@ export function bezier(p0: Point, p1: Point, p2: Point, p3: Point): Bezier {
 export function bezierLength(b: Bezier, epsilon = 1e-4): number {
 	const { p0, p1, p2, p3 } = b;
 	const lower = pointsDistance(p0, p3);
-	const upper =
-		pointsDistance(p0, p1) +
-		pointsDistance(p1, p2) +
-		pointsDistance(p2, p3);
+	const upper = pointsDistance(p0, p1) + pointsDistance(p1, p2) + pointsDistance(p2, p3);
 
 	if (upper - lower <= 2 * epsilon) {
 		return (lower + upper) / 2;

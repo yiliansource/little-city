@@ -108,10 +108,7 @@ describe("graph", () => {
 			expect(graph.neighbours("c", "in")).toEqual(["a"]);
 		});
 		test("both", () => {
-			expect(graph.neighbours("a", "both").toSorted()).toEqual([
-				"b",
-				"c",
-			]);
+			expect(graph.neighbours("a", "both").toSorted()).toEqual(["b", "c"]);
 			expect(graph.neighbours("b", "both")).toEqual(["a"]);
 			expect(graph.neighbours("c", "both")).toEqual(["a"]);
 		});
@@ -144,10 +141,7 @@ describe("graph", () => {
 			expect(graph.incidentEdges("c", "in")).toEqual(["a-c"]);
 		});
 		test("both", () => {
-			expect(graph.incidentEdges("a", "both").toSorted()).toEqual([
-				"a-c",
-				"b-a",
-			]);
+			expect(graph.incidentEdges("a", "both").toSorted()).toEqual(["a-c", "b-a"]);
 			expect(graph.incidentEdges("b", "both")).toEqual(["b-a"]);
 			expect(graph.incidentEdges("c", "both")).toEqual(["a-c"]);
 		});

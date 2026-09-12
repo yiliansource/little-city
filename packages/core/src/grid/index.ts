@@ -1,3 +1,3 @@
-export * from "./coords";
 export * from "./TileGrid";
-export * from "./types";
+export * from "./tileCoord";
+export * from "./tileTypes";

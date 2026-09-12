@@ -11,10 +11,7 @@ export interface GraphEdge {
 
 export type EdgeDirection = "in" | "out" | "both";
 
-export class Graph<
-	N extends GraphNode = GraphNode,
-	E extends GraphEdge = GraphEdge,
-> {
+export class Graph<N extends GraphNode = GraphNode, E extends GraphEdge = GraphEdge> {
 	readonly nodes = new Map<string, N>();
 	readonly edges = new Map<string, E>();
 

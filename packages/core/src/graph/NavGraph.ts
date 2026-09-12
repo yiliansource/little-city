@@ -1,11 +1,6 @@
 import { assertDefined, PriorityQueue } from "../common";
 import type { Point } from "../geometry";
-import {
-	type EdgeDirection,
-	Graph,
-	type GraphEdge,
-	type GraphNode,
-} from "./Graph";
+import { type EdgeDirection, Graph, type GraphEdge, type GraphNode } from "./Graph";
 
 export interface NavGraphNode extends GraphNode {
 	position: Point;
@@ -21,11 +16,7 @@ export interface AStarResult {
 }
 
 export class NavGraph extends Graph<NavGraphNode, NavGraphEdge> {
-	astar(
-		startId: string,
-		goalId: string,
-		direction: EdgeDirection = "out",
-	): AStarResult | null {
+	astar(startId: string, goalId: string, direction: EdgeDirection = "out"): AStarResult | null {
 		const goalNode = this.nodes.get(goalId);
 		assertDefined(goalNode, `goal node is not in the graph`);
 
@@ -33,10 +24,7 @@ export class NavGraph extends Graph<NavGraphNode, NavGraphEdge> {
 			const node = this.nodes.get(nodeId);
 			assertDefined(node, `node '${nodeId}' not in graph`);
 
-			return Math.hypot(
-				node.position.x - goalNode.position.x,
-				node.position.z - goalNode.position.z,
-			);
+			return Math.hypot(node.position.x - goalNode.position.x, node.position.z - goalNode.position.z);
 		};
 
 		const dist = new Map<string, number>([[startId, 0]]);
@@ -66,8 +54,7 @@ export class NavGraph extends Graph<NavGraphNode, NavGraphEdge> {
 				if (visited.has(neighbour)) continue;
 
 				const tentativeDist = currentDist + edge.length;
-				const neighbourDist =
-					dist.get(neighbour) ?? Number.POSITIVE_INFINITY;
+				const neighbourDist = dist.get(neighbour) ?? Number.POSITIVE_INFINITY;
 				if (tentativeDist < neighbourDist) {
 					dist.set(neighbour, tentativeDist);
 					prevNode.set(neighbour, current);

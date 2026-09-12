@@ -1,45 +1,43 @@
 import { EventBus } from "../events/EventBus";
-import { tileKey } from "./coords";
-import type { TileCoord, TileData, TileType } from "./types";
+import { type TileCoord, tileCoordKey } from "./tileCoord";
+import type { TileType } from "./tileTypes";
 
 export interface TileGridEvents {
 	tilePlaced: {
 		coord: TileCoord;
 		type: TileType;
 	};
-	tileRemoved: {
+	tileDeleted: {
 		coord: TileCoord;
 	};
 }
 
 export class TileGrid {
-	private tiles = new Map<string, TileData>();
+	private readonly tiles = new Map<string, TileType>();
 
 	readonly events = new EventBus<TileGridEvents>();
 
-	getTile(coord: TileCoord): TileData | undefined {
-		return this.tiles.get(tileKey(coord));
+	get(coord: TileCoord): TileType | undefined {
+		return this.tiles.get(tileCoordKey(coord));
 	}
-
-	isRoad(coord: TileCoord): boolean {
-		return this.getTile(coord)?.type === "road";
-	}
-
-	placeTile(coord: TileCoord, type: TileType): void {
-		const key = tileKey(coord);
-		const previous = this.tiles.get(key)?.type ?? null;
+	set(coord: TileCoord, type: TileType): void {
+		const key = tileCoordKey(coord);
+		const previous = this.get(coord);
 		if (previous === type) return;
 
-		this.tiles.set(key, { coord, type });
+		this.tiles.set(key, type);
 		this.events.emit("tilePlaced", { coord, type });
 	}
-
-	removeTile(coord: TileCoord): void {
-		const key = tileKey(coord);
+	delete(coord: TileCoord): boolean {
+		const key = tileCoordKey(coord);
 		const existing = this.tiles.get(key);
-		if (!existing) return;
+		if (existing === undefined) {
+			return false;
+		}
 
 		this.tiles.delete(key);
-		this.events.emit("tileRemoved", { coord });
+		this.events.emit("tileDeleted", { coord });
+
+		return true;
 	}
 }

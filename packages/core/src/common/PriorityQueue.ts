@@ -68,12 +68,7 @@ export class PriorityQueue<T> {
 	private bubbleUp(index: number): void {
 		while (index > 0) {
 			const parentIndex = (index - 1) >> 1;
-			if (
-				this.compare(
-					this.heap[index]!.priority,
-					this.heap[parentIndex]!.priority,
-				) >= 0
-			) {
+			if (this.compare(this.heap[index]!.priority, this.heap[parentIndex]!.priority) >= 0) {
 				break;
 			}
 
@@ -90,22 +85,10 @@ export class PriorityQueue<T> {
 			const right = index * 2 + 2;
 			let best = index;
 
-			if (
-				left < length &&
-				this.compare(
-					this.heap[left]!.priority,
-					this.heap[best]!.priority,
-				) < 0
-			) {
+			if (left < length && this.compare(this.heap[left]!.priority, this.heap[best]!.priority) < 0) {
 				best = left;
 			}
-			if (
-				right < length &&
-				this.compare(
-					this.heap[right]!.priority,
-					this.heap[best]!.priority,
-				) < 0
-			) {
+			if (right < length && this.compare(this.heap[right]!.priority, this.heap[best]!.priority) < 0) {
 				best = right;
 			}
 			if (best === index) break;
