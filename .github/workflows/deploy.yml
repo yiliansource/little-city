@@ -19,7 +19,7 @@ jobs:
         runs-on: ubuntu-latest
         environment:
             name: github-pages
-            url: ${{ github.event_name == 'workflow_dispatch' && github.ref || github.event.workflow_run.head_sha }}
+            url: ${{ steps.deploy.outputs.page_url }}
         steps:
             - uses: actions/checkout@v7
               with:
