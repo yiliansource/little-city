@@ -3,12 +3,14 @@ import { onMounted, onUnmounted, type Ref, shallowRef, watch } from "vue";
 import { WorldRenderer } from "@little-city/render";
 
 import { useToolStore } from "../stores/tool";
+import { useAssetCache } from "./useAssetCache";
 import { useWorld } from "./useWorld";
 
 export function useWorldRenderer(containerRef: Ref<HTMLElement | undefined>): Readonly<Ref<WorldRenderer | undefined>> {
 	const rendererRef = shallowRef<WorldRenderer>();
 
 	const world = useWorld();
+	const assetCache = useAssetCache();
 	const tools = useToolStore();
 
 	const unsubscribes: (() => void)[] = [];
@@ -18,7 +20,7 @@ export function useWorldRenderer(containerRef: Ref<HTMLElement | undefined>): Re
 			throw new Error("invalid renderer container reference");
 		}
 
-		const renderer = new WorldRenderer(containerRef.value, world);
+		const renderer = new WorldRenderer(containerRef.value, world, assetCache);
 		rendererRef.value = renderer;
 
 		unsubscribes.push(

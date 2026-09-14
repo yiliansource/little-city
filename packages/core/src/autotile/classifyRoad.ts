@@ -17,7 +17,7 @@ export function classifyRoad(mask: number): [RoadType, number] | undefined {
 	if (count === 0) {
 		return [RoadType.Isolated, 0];
 	} else if (count === 1) {
-		const index = popCount(mask - 1);
+		const index = (4 - popCount(mask - 1)) % 4;
 		return [RoadType.DeadEnd, 90 * index];
 	} else if (count === 2) {
 		if (mask === (SIDE_BITMASKS[TileSide.North] | SIDE_BITMASKS[TileSide.South])) {
@@ -42,7 +42,7 @@ export function classifyRoad(mask: number): [RoadType, number] | undefined {
 function rotationToMatch(mask: number, base: number): number {
 	for (let i = 0; i < 4; i++) {
 		if (mask === base) {
-			return (360 - i * 90) % 360;
+			return i * 90;
 		}
 
 		mask = rotateMaskClockwise(mask);

@@ -5,35 +5,34 @@ export type AssetManifest<K extends string = string> = Record<K, string>;
 
 export class AssetCache<K extends string = string> {
 	private readonly loader = new GLTFLoader();
-	private readonly cache = new Map<K, Promise<THREE.Object3D>>();
+	private readonly cache = new Map<K, THREE.Object3D>();
 
 	constructor(private readonly manifest: AssetManifest<K>) {}
 
-	async get(key: K): Promise<THREE.Object3D> {
-		let pending = this.cache.get(key);
-		if (!pending) {
-			const url = this.manifest[key];
-			if (!url) {
-				throw new Error(`no asset registered for key '${key}'`);
-			}
-
-			pending = this.loader
-				.loadAsync(url)
-				.then((gltf) => gltf.scene)
-				.catch(() => {
-					throw new Error(`failed to load asset '${key}'`);
-				});
-			this.cache.set(key, pending);
+	get(key: K): THREE.Object3D {
+		const cached = this.cache.get(key);
+		if (cached === undefined) {
+			throw new Error(`no asset with key '${key}' was preloaded.`);
 		}
 
-		return (await pending).clone();
+		return cached.clone();
 	}
 
 	async preload(keys: K[], onProgress?: (loaded: number, total: number) => void): Promise<void> {
 		let loaded = 0;
 		await Promise.all(
 			keys.map(async (key) => {
-				await this.get(key);
+				const url = this.manifest[key];
+				if (!url) throw new Error(`no asset registered for key '${key}'`);
+
+				const cached = await this.loader
+					.loadAsync(url)
+					.then((gltf) => gltf.scene)
+					.catch(() => {
+						throw new Error(`failed to load asset '${key}'`);
+					});
+				this.cache.set(key, cached);
+
 				onProgress?.(++loaded, keys.length);
 			})
 		);

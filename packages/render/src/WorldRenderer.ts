@@ -3,6 +3,7 @@ import { OrbitControls } from "three/examples/jsm/Addons.js";
 
 import type { World } from "@little-city/core";
 
+import type { AssetCache, AssetKey } from "./assets";
 import { ToolController } from "./controllers/ToolController";
 import { NavGraphDebugSystem } from "./systems/debug";
 import { DebugSystemCollection } from "./systems/debug/DebugSystemCollection";
@@ -35,6 +36,7 @@ function createControls(camera: THREE.Camera, container: HTMLElement): OrbitCont
 	controls.dampingFactor = 0.1;
 	controls.minDistance = 1;
 	controls.maxDistance = 20;
+	controls.maxPolarAngle = Math.PI / 2;
 
 	return controls;
 }
@@ -92,14 +94,15 @@ export class WorldRenderer {
 
 	constructor(
 		private container: HTMLElement,
-		world: World
+		world: World,
+		assetCache: AssetCache<AssetKey>
 	) {
 		this.scene = createScene();
 		this.camera = createCamera(container.clientWidth / container.clientHeight);
 		this.renderer = createRenderer(container);
 		this.controls = createControls(this.camera, container);
 
-		this.tileMeshSystem = new TileMeshSystem(world.grid);
+		this.tileMeshSystem = new TileMeshSystem(world.grid, assetCache);
 		this.scene.add(this.tileMeshSystem.group);
 
 		this.placementIndicatorSystem = new TileIndicatorSystem();
