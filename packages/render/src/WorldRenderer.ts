@@ -24,6 +24,7 @@ function createRenderer(container: HTMLElement): THREE.WebGLRenderer {
 		antialias: true,
 		alpha: true,
 	});
+	renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 	renderer.setClearColor(0x000000, 0);
 	renderer.setSize(container.clientWidth, container.clientHeight);
 	container.appendChild(renderer.domElement);
