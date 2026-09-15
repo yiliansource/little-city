@@ -87,6 +87,7 @@ export class ToolController {
 	}
 
 	private onPointerMove(e: PointerEvent) {
+		if (e.pointerType === "touch") return;
 		const coord = this.screenToTileCoord(e.clientX, e.clientY);
 		this.setHoveredCoord(coord);
 	}
@@ -94,19 +95,22 @@ export class ToolController {
 		this.setHoveredCoord(null);
 	}
 	private onPointerDown(e: PointerEvent) {
+		if (!e.isPrimary) return;
 		this.pointerDownPos = new THREE.Vector2(e.clientX, e.clientY);
 	}
 	private onPointerUp(e: PointerEvent) {
+		if (!e.isPrimary) return;
 		if (this.pointerDownPos === null) return;
 
 		const delta = Math.hypot(e.clientX - this.pointerDownPos.x, e.clientY - this.pointerDownPos.y);
 		this.pointerDownPos = null;
-
 		if (delta > 5) return;
-		if (this.hoveredCoord === null) return;
 
-		this.activeTool?.onClick(this.hoveredCoord);
-		this.activeTool?.onHover(this.hoveredCoord);
+		const coord = this.screenToTileCoord(e.clientX, e.clientY);
+		if (coord === null) return;
+
+		this.activeTool?.onClick(coord);
+		this.setHoveredCoord(e.pointerType === "touch" ? null : coord);
 	}
 
 	dispose(): void {

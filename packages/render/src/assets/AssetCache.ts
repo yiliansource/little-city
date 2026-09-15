@@ -28,7 +28,8 @@ export class AssetCache<K extends string = string> {
 				const cached = await this.loader
 					.loadAsync(url)
 					.then((gltf) => gltf.scene)
-					.catch(() => {
+					.catch((e) => {
+						console.error(url, e);
 						throw new Error(`failed to load asset '${key}'`);
 					});
 				this.cache.set(key, cached);

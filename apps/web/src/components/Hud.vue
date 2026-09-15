@@ -46,8 +46,8 @@ const toolStore = useToolStore();
 
 				<div class="mx-1 my-1 border-t border-panel-border"></div>
 
-				<ToolButton :icon="IconTrafficLights" :disabled="true" />
-				<ToolButton :icon="IconWalk" :disabled="true" />
+				<ToolButton :icon="IconTrafficLights" disabled />
+				<ToolButton :icon="IconWalk" disabled />
 			</Panel>
 
 			<div class="flex flex-col items-start gap-3">
@@ -69,12 +69,14 @@ const toolStore = useToolStore();
 					<ToolButton
 						:icon="IconTree"
 						label="Park"
+						disabled
 						:active="toolStore.selectedTileType === TileType.Park"
 						@click="toolStore.selectedTileType = TileType.Park"
 					/>
 					<ToolButton
 						:icon="IconBuilding"
 						label="House"
+						disabled
 						:active="toolStore.selectedTileType === TileType.House"
 						@click="toolStore.selectedTileType = TileType.House"
 					/>
