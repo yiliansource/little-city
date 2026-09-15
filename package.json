@@ -6,7 +6,7 @@
 		"dev": "FORCE_COLOR=3 bun run --filter '@little-city/web' dev",
 		"build": "FORCE_COLOR=3 bun run --filter '@little-city/web' build",
 		"preview": "FORCE_COLOR=3 bun run --filter '@little-city/web' preview",
-		"test": "bun run --filter '*' test",
+		"test": "FORCE_COLOR=3 bun run --filter '*' test",
 		"format": "bunx --bun @biomejs/biome format --write",
 		"lint": "bunx --bun @biomejs/biome lint"
 	},
