@@ -5,6 +5,7 @@ import {
 	computeConnectivityBitmask,
 	RoadType,
 	type TileCoord,
+	type TileData,
 	type TileGrid,
 	TileType,
 	tileCoordKey,
@@ -49,9 +50,13 @@ export class TileMeshSystem extends BaseSceneSystem {
 			grid.events.on("tilePlaced", this.onTilePlaced),
 			grid.events.on("tileDeleted", this.onTileDeleted)
 		);
+
+		for (const [coord] of this.grid.entries()) {
+			this.generateTileMesh(coord);
+		}
 	}
 
-	private onTilePlaced({ coord }: { coord: TileCoord; type: TileType }): void {
+	private onTilePlaced({ coord }: { coord: TileCoord; data: TileData }): void {
 		this.regenerateChunk(coord);
 	}
 	private onTileDeleted({ coord }: { coord: TileCoord }): void {
@@ -61,19 +66,22 @@ export class TileMeshSystem extends BaseSceneSystem {
 	private regenerateChunk(coord: TileCoord): void {
 		for (const c of [coord, ...tileCoordNeighbours(coord)]) {
 			this.removeTileMesh(c);
-			const type = this.grid.get(c);
-			if (type === undefined) continue;
+			this.generateTileMesh(c);
+		}
+	}
+	private generateTileMesh(coord: TileCoord): void {
+		const type = this.grid.getType(coord);
+		if (type === undefined) return;
 
-			if (type === TileType.Road) {
-				this.loadRoadMesh(c);
-			} else {
-				this.createBoxMesh(c, type);
-			}
+		if (type === TileType.Road) {
+			this.loadRoadMesh(coord);
+		} else {
+			this.createBoxMesh(coord, type);
 		}
 	}
 
 	private loadRoadMesh(coord: TileCoord): void {
-		const mask = computeConnectivityBitmask(this.grid, coord);
+		const mask = computeConnectivityBitmask(this.grid, coord, (a, b) => a === b);
 		const classification = classifyRoad(mask);
 		if (classification === undefined) throw new Error("invalid road classification");
 		const [roadType, rotationY] = classification;

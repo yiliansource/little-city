@@ -22,11 +22,11 @@ const toolStore = useToolStore();
 
 <template>
 	<div class="fixed inset-0 select-none pointer-events-none">
-		<div class="m-6 absolute bottom-0 left-0">
-			<h1 class="text-6xl tracking-wide font-display font-semibold">Little City</h1>
+		<div class="m-3 md:m-6 absolute bottom-0 left-0">
+			<h1 class="text-4xl md:text-6xl tracking-wide font-display font-semibold">Little City</h1>
 		</div>
 
-		<div class="m-4 absolute left-0 top-0 flex flex-row gap-3">
+		<div class="m-2 md:m-4 absolute left-0 top-0 flex flex-row gap-2 md:gap-3">
 			<Panel class="mb-auto pointer-events-auto">
 				<ToolButton
 					:icon="IconPointer"
@@ -50,7 +50,7 @@ const toolStore = useToolStore();
 				<ToolButton :icon="IconWalk" disabled />
 			</Panel>
 
-			<div class="flex flex-col items-start gap-3">
+			<div class="flex flex-col items-start gap-2 md:gap-3">
 				<Panel class="pointer-events-auto" v-if="toolStore.activeToolType !== null">
 					<p class="mx-1 text-sm text-foreground-muted">
 						Selected tool:

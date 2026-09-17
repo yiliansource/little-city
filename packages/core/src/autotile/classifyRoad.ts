@@ -1,6 +1,6 @@
 import { popCount } from "../common";
 import { TileSide } from "../grid";
-import { SIDE_BITMASKS } from "./bitmask";
+import { getMaskRotationToMatch, getMaskRotationToMatchComplement, SIDE_BITMASKS } from "./bitmask";
 
 export enum RoadType {
 	Isolated = "isolated",
@@ -27,33 +27,14 @@ export function classifyRoad(mask: number): [RoadType, number] | undefined {
 		} else {
 			return [
 				RoadType.Curve,
-				rotationToMatch(mask, SIDE_BITMASKS[TileSide.North] | SIDE_BITMASKS[TileSide.East]),
+				getMaskRotationToMatch(SIDE_BITMASKS[TileSide.North] | SIDE_BITMASKS[TileSide.East], mask) * 90,
 			];
 		}
 	} else if (count === 3) {
-		return [RoadType.TJunction, rotationToMatchMissing(mask, SIDE_BITMASKS[TileSide.South])];
+		return [RoadType.TJunction, getMaskRotationToMatchComplement(SIDE_BITMASKS[TileSide.South], mask) * 90];
 	} else if (count === 4) {
 		return [RoadType.Cross, 0];
 	}
 
 	return undefined;
-}
-
-function rotationToMatch(mask: number, base: number): number {
-	for (let i = 0; i < 4; i++) {
-		if (mask === base) {
-			return i * 90;
-		}
-
-		mask = rotateMaskClockwise(mask);
-	}
-
-	throw new Error();
-}
-function rotationToMatchMissing(mask: number, base: number): number {
-	return rotationToMatch(mask, ~base & 0b1111);
-}
-
-function rotateMaskClockwise(mask: number): number {
-	return ((mask << 1) & 0b1111) | (mask >>> 3);
 }

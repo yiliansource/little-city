@@ -32,6 +32,14 @@ export function tileCoordKey(coord: TileCoord): string {
 	return `${coord.x},${coord.z}`;
 }
 
+export function parseTileCoordKey(s: string): TileCoord | undefined {
+	const match = s.match(/^(-?\d+),(-?\d+)$/);
+	if (match === null) return undefined;
+
+	const [, x, z] = match;
+	return tileCoord(Number(x), Number(z));
+}
+
 export function tileCoordAdd(a: TileCoord, b: TileCoord): TileCoord {
 	return tileCoord(a.x + b.x, a.z + b.z);
 }

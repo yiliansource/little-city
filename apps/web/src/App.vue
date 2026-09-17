@@ -9,9 +9,13 @@ import WorldView from "./components/WorldView.vue";
 import { provideAssetCache } from "./composables/useAssetCache.js";
 import { useAssetPreload } from "./composables/useAssetPreload.js";
 import { provideWorld } from "./composables/useWorld.js";
+import { loadWorld, useWorldAutosave } from "./composables/useWorldPersistence.js";
 import { assetManifest } from "./manifests/index.js";
 
 const world = new World();
+loadWorld(world);
+useWorldAutosave(world);
+
 const assetCache = new AssetCache(assetManifest);
 
 provideWorld(world);

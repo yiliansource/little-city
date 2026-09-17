@@ -1,4 +1,4 @@
-import type { TileCoord, TileType, World } from "@little-city/core";
+import { type TileCoord, TileType, type World } from "@little-city/core";
 
 import type { TileIndicatorSystem } from "../../systems/TileIndicatorSystem";
 import type { Tool } from "./tool";
@@ -19,14 +19,20 @@ export class PlaceTileTool implements Tool {
 		if (coord === null) {
 			this.indicator.hide();
 		} else {
-			const valid = this.tileType !== null && this.world.grid.get(coord) !== this.tileType;
+			const valid = this.tileType !== null && this.world.grid.getType(coord) !== this.tileType;
 			this.indicator.showAt(coord, valid);
 		}
 	}
 
 	onClick(coord: TileCoord): void {
 		if (this.tileType !== null) {
-			this.world.grid.set(coord, this.tileType);
+			if (this.tileType === TileType.Road) {
+				this.world.grid.set(coord, { type: TileType.Road });
+			} else if (this.tileType === TileType.House) {
+				this.world.grid.set(coord, { type: TileType.House, variant: 0 });
+			} else if (this.tileType === TileType.Park) {
+				this.world.grid.set(coord, { type: TileType.Park, variant: 0, hasPath: false });
+			}
 		}
 	}
 
