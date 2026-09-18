@@ -1,4 +1,4 @@
-import { type TileCoord, type TileGrid, TileSide, type TileType, tileCoordNeighbour } from "../grid";
+import { TileCorner, TileSide } from "../grid";
 
 export const SIDE_BITMASKS: Record<TileSide, number> = {
 	[TileSide.North]: 1 << 0,
@@ -7,32 +7,14 @@ export const SIDE_BITMASKS: Record<TileSide, number> = {
 	[TileSide.West]: 1 << 3,
 };
 
+export const CORNER_BITMASKS: Record<TileCorner, number> = {
+	[TileCorner.NorthEast]: 1 << 0,
+	[TileCorner.SouthEast]: 1 << 1,
+	[TileCorner.SouthWest]: 1 << 2,
+	[TileCorner.NorthWest]: 1 << 3,
+};
+
 const BITMASK_FULL = 0b1111;
-
-export type ConnectivityPredicate = (a: TileType | undefined, b: TileType | undefined) => boolean;
-
-/**
- * Computes a connectivity bitmask for the given coordinate, grid and a connectivity predicate.
- */
-export function computeConnectivityBitmask(
-	grid: TileGrid,
-	coord: TileCoord,
-	doTilesConnect: ConnectivityPredicate
-): number {
-	const type = grid.getType(coord);
-	let mask = 0;
-
-	for (const side of Object.values(TileSide)) {
-		const neighbour = tileCoordNeighbour(coord, side);
-		const neighbourType = grid.getType(neighbour);
-
-		if (doTilesConnect(type, neighbourType)) {
-			mask |= SIDE_BITMASKS[side];
-		}
-	}
-
-	return mask;
-}
 
 /**
  * Returns the number of rotations (counterclockwise) needed for the given mask to match the desired mask.

@@ -1,9 +1,6 @@
-import * as THREE from "three";
+import type * as THREE from "three";
 
 import {
-	classifyRoad,
-	computeConnectivityBitmask,
-	RoadType,
 	type TileCoord,
 	type TileData,
 	type TileGrid,
@@ -12,30 +9,13 @@ import {
 	tileCoordNeighbours,
 } from "@little-city/core";
 
-import type { AssetCache, AssetKey, RoadAssetKey } from "../assets";
-import { tileCoordToWorld } from "../common";
-import { disposeObject3D } from "../common/dispose";
+import { type AssetCache, type AssetData, type AssetKey, getParkTileAsset, getRoadTileAsset } from "../assets";
+import { DEG2RAD, tileCoordToWorld } from "../common";
 import { BaseSceneSystem } from "./BaseSceneSystem";
 
-const colorLookup: Record<TileType, number> = {
-	[TileType.Road]: 0x666666,
-	[TileType.Park]: 0x88cc88,
-	[TileType.House]: 0xcccccc,
-};
-
-const roadAssetLookup: Record<RoadType, RoadAssetKey> = {
-	[RoadType.Isolated]: "road_isolated",
-	[RoadType.DeadEnd]: "road_deadend",
-	[RoadType.Curve]: "road_curve",
-	[RoadType.Straight]: "road_straight",
-	[RoadType.TJunction]: "road_tjunction",
-	[RoadType.Cross]: "road_cross",
-};
-
 export class TileMeshSystem extends BaseSceneSystem {
-	private readonly unsubscribes: (() => void)[] = [];
 	private readonly coordObjectMap = new Map<string, THREE.Object3D>();
-	private readonly ownedObjects = new Set<THREE.Object3D>(); // temporary while we still use placeholder meshes
+	private readonly unsubscribes: (() => void)[] = [];
 
 	constructor(
 		private readonly grid: TileGrid,
@@ -52,7 +32,7 @@ export class TileMeshSystem extends BaseSceneSystem {
 		);
 
 		for (const [coord] of this.grid.entries()) {
-			this.generateTileMesh(coord);
+			this.placeTileAsset(coord);
 		}
 	}
 
@@ -65,69 +45,44 @@ export class TileMeshSystem extends BaseSceneSystem {
 
 	private regenerateChunk(coord: TileCoord): void {
 		for (const c of [coord, ...tileCoordNeighbours(coord)]) {
-			this.removeTileMesh(c);
-			this.generateTileMesh(c);
+			this.removeAsset(c);
+			this.placeTileAsset(c);
 		}
 	}
-	private generateTileMesh(coord: TileCoord): void {
+	private placeTileAsset(coord: TileCoord): void {
 		const type = this.grid.getType(coord);
 		if (type === undefined) return;
 
 		if (type === TileType.Road) {
-			this.loadRoadMesh(coord);
+			this.placeAsset(coord, getRoadTileAsset(this.grid, coord));
+		} else if (type === TileType.Park) {
+			this.placeAsset(coord, getParkTileAsset(this.grid, coord));
 		} else {
-			this.createBoxMesh(coord, type);
+			throw new Error("not implemented");
 		}
 	}
 
-	private loadRoadMesh(coord: TileCoord): void {
-		const mask = computeConnectivityBitmask(this.grid, coord, (a, b) => a === b);
-		const classification = classifyRoad(mask);
-		if (classification === undefined) throw new Error("invalid road classification");
-		const [roadType, rotationY] = classification;
-
-		const original = this.assetCache.get(roadAssetLookup[roadType]);
-
-		const instance = original.clone();
+	private placeAsset(coord: TileCoord, asset: AssetData): void {
+		const instance = this.assetCache.get(asset.assetKey);
 		instance.position.copy(tileCoordToWorld(coord));
-		instance.rotation.y = (rotationY * Math.PI) / 180;
+		instance.rotation.y = asset.rotation * DEG2RAD;
 
 		this.group.add(instance);
 		this.coordObjectMap.set(tileCoordKey(coord), instance);
 	}
-	private createBoxMesh(coord: TileCoord, tileType: TileType): void {
-		const geometry = new THREE.BoxGeometry(1, 0.2, 1);
-		const material = new THREE.MeshStandardMaterial({
-			color: colorLookup[tileType],
-		});
-		const mesh = new THREE.Mesh(geometry, material);
-		mesh.position.copy(tileCoordToWorld(coord));
 
-		this.group.add(mesh);
-		this.coordObjectMap.set(tileCoordKey(coord), mesh);
-		this.ownedObjects.add(mesh);
-	}
-
-	private removeTileMesh(coord: TileCoord): boolean {
+	private removeAsset(coord: TileCoord): boolean {
 		const key = tileCoordKey(coord);
 		const mesh = this.coordObjectMap.get(key);
 		if (mesh === undefined) return false;
 
 		this.coordObjectMap.delete(key);
 		this.group.remove(mesh);
-		this.disposeIfOwned(mesh);
 
 		return true;
 	}
 
-	private disposeIfOwned(obj: THREE.Object3D): void {
-		if (!this.ownedObjects.has(obj)) return;
-		this.ownedObjects.delete(obj);
-		disposeObject3D(obj);
-	}
-
 	override dispose(): void {
 		while (this.unsubscribes.length > 0) this.unsubscribes.pop()?.();
-		for (const obj of this.coordObjectMap.values()) this.disposeIfOwned(obj);
 	}
 }

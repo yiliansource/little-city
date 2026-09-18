@@ -3,12 +3,14 @@ import { describe, expect, test } from "bun:test";
 import {
 	parseTileCoordKey,
 	type TileCoord,
+	TileCorner,
 	TileSide,
 	tileCoord,
 	tileCoordAdd,
+	tileCoordCornerNeighbour,
 	tileCoordEquals,
 	tileCoordKey,
-	tileCoordNeighbour,
+	tileCoordSideNeighbour,
 } from "@little-city/core";
 
 describe("tile coordinates", () => {
@@ -44,17 +46,33 @@ describe("tile coordinates", () => {
 		});
 	});
 	describe("neighbours", () => {
-		const base = tileCoord(2, 3);
-		const cases: [TileSide, TileCoord][] = [
-			[TileSide.North, tileCoord(2, 2)],
-			[TileSide.East, tileCoord(3, 3)],
-			[TileSide.South, tileCoord(2, 4)],
-			[TileSide.West, tileCoord(1, 3)],
-		];
+		describe("side", () => {
+			const base = tileCoord(2, 3);
+			const cases: [TileSide, TileCoord][] = [
+				[TileSide.North, tileCoord(2, 2)],
+				[TileSide.East, tileCoord(3, 3)],
+				[TileSide.South, tileCoord(2, 4)],
+				[TileSide.West, tileCoord(1, 3)],
+			];
 
-		test.each(cases)("%s", (side, expectedCoord) => {
-			const neighbour = tileCoordNeighbour(base, side);
-			expect(neighbour).toEqual(expectedCoord);
+			test.each(cases)("%s", (side, expectedCoord) => {
+				const neighbour = tileCoordSideNeighbour(base, side);
+				expect(neighbour).toEqual(expectedCoord);
+			});
+		});
+		describe("corner", () => {
+			const base = tileCoord(1, 2);
+			const cases: [TileCorner, TileCoord][] = [
+				[TileCorner.NorthEast, tileCoord(2, 1)],
+				[TileCorner.SouthEast, tileCoord(2, 3)],
+				[TileCorner.SouthWest, tileCoord(0, 3)],
+				[TileCorner.NorthWest, tileCoord(0, 1)],
+			];
+
+			test.each(cases)("%s", (side, expectedCoord) => {
+				const neighbour = tileCoordCornerNeighbour(base, side);
+				expect(neighbour).toEqual(expectedCoord);
+			});
 		});
 	});
 });

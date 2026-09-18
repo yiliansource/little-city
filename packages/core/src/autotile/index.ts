@@ -1,2 +1,3 @@
 export * from "./bitmask";
-export * from "./classifyRoad";
+export * from "./classifiers";
+export * from "./connectivity";

@@ -4,12 +4,13 @@ import { EventBus, type TileCoord, type TileType, tileCoordEquals, type World } 
 
 import { worldToTileCoord } from "../common/coords";
 import type { TileIndicatorSystem } from "../systems/TileIndicatorSystem";
-import { DestroyTileTool, PlaceTileTool, SelectTileTool, type Tool } from "./tools";
+import { DestroyTileTool, ParkPathTool, PlaceTileTool, SelectTileTool, type Tool } from "./tools";
 
 export enum ToolType {
 	Select = "select",
 	Place = "place",
 	Delete = "delete",
+	ParkPath = "parkPath",
 }
 
 export interface ToolControllerEvents {
@@ -40,6 +41,7 @@ export class ToolController {
 			[ToolType.Select]: new SelectTileTool(world, indicator),
 			[ToolType.Place]: new PlaceTileTool(world, indicator),
 			[ToolType.Delete]: new DestroyTileTool(world, indicator),
+			[ToolType.ParkPath]: new ParkPathTool(world, indicator),
 		};
 
 		this.onPointerMove = this.onPointerMove.bind(this);
@@ -95,11 +97,11 @@ export class ToolController {
 		this.setHoveredCoord(null);
 	}
 	private onPointerDown(e: PointerEvent) {
-		if (!e.isPrimary) return;
+		if (!e.isPrimary || (e.pointerType === "mouse" && e.button !== 0)) return;
 		this.pointerDownPos = new THREE.Vector2(e.clientX, e.clientY);
 	}
 	private onPointerUp(e: PointerEvent) {
-		if (!e.isPrimary) return;
+		if (!e.isPrimary || (e.pointerType === "mouse" && e.button !== 0)) return;
 		if (this.pointerDownPos === null) return;
 
 		const delta = Math.hypot(e.clientX - this.pointerDownPos.x, e.clientY - this.pointerDownPos.y);
@@ -110,7 +112,7 @@ export class ToolController {
 		if (coord === null) return;
 
 		this.activeTool?.onClick(coord);
-		this.setHoveredCoord(e.pointerType === "touch" ? null : coord);
+		if (e.pointerType !== "touch") this.activeTool?.onHover(coord);
 	}
 
 	dispose(): void {

@@ -26,8 +26,6 @@ export class TileGrid {
 
 	set(coord: TileCoord, data: TileData): void {
 		const key = tileCoordKey(coord);
-		const previousType = this.getType(coord);
-		if (previousType === data.type) return;
 
 		this.tiles.set(key, data);
 		this.events.emit("tilePlaced", { coord, data });

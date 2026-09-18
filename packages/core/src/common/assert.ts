@@ -15,3 +15,10 @@ export function assertNonNull<T>(val: T, message?: string): asserts val is Exclu
 		throw new Error(message ?? "value is null");
 	}
 }
+
+/**
+ * Asserts that a value is handled exhaustive, in other words the code path is unreachable.
+ */
+export function assertUnreachable(value: never): never {
+	throw new Error(`Unreachable case: ${JSON.stringify(value)}`);
+}

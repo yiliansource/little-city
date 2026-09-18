@@ -36,7 +36,10 @@ describe("classify road", () => {
 	);
 
 	test.each(casesWithLabels)("0b%s -> %s, %d°", (_strMask, expectedType, expectedRotation, mask) => {
-		expect(classifyRoad(mask)).toEqual([expectedType, expectedRotation]);
+		expect(classifyRoad(mask)).toEqual({
+			type: expectedType,
+			rotation: expectedRotation,
+		});
 	});
 
 	test("invalid mask", () => {

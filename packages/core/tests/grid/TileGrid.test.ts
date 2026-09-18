@@ -59,7 +59,6 @@ describe("tile grid", () => {
 
 			grid.set(tileCoord(1, 2), { type: TileType.Road });
 			grid.set(tileCoord(3, 4), { type: TileType.Park, hasPath: false, variant: 0 });
-			grid.set(tileCoord(1, 2), { type: TileType.Road }); // nothing happens
 			grid.set(tileCoord(1, 2), { type: TileType.House, variant: 0 });
 
 			expect(logs).toEqual([

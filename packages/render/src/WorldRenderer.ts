@@ -15,7 +15,7 @@ function createScene(): THREE.Scene {
 }
 function createCamera(aspect: number): THREE.PerspectiveCamera {
 	const camera = new THREE.PerspectiveCamera(60, aspect, 0.1, 1000);
-	camera.position.set(6, 5, 8);
+	camera.position.set(5, 6, 7);
 
 	return camera;
 }

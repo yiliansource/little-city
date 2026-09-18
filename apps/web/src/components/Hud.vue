@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import {
 	IconBuilding,
+	IconFootsteps,
 	IconPointer,
 	IconRoad,
 	IconSquarePlus,
@@ -46,6 +47,11 @@ const toolStore = useToolStore();
 
 				<div class="mx-1 my-1 border-t border-panel-border"></div>
 
+				<ToolButton
+					:icon="IconFootsteps"
+					:active="toolStore.activeToolType === ToolType.ParkPath"
+					@click="toolStore.activeToolType = ToolType.ParkPath"
+				/>
 				<ToolButton :icon="IconTrafficLights" disabled />
 				<ToolButton :icon="IconWalk" disabled />
 			</Panel>
@@ -69,7 +75,6 @@ const toolStore = useToolStore();
 					<ToolButton
 						:icon="IconTree"
 						label="Park"
-						disabled
 						:active="toolStore.selectedTileType === TileType.Park"
 						@click="toolStore.selectedTileType = TileType.Park"
 					/>
